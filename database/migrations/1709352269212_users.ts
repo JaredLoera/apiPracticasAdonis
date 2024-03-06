@@ -10,6 +10,7 @@ export default class extends BaseSchema {
       table.string('password', 180).notNullable()
       table.boolean('it_is_active').defaultTo(true)
       table.boolean('it_is_verified').defaultTo(false)
+      table.integer('rol_id').defaultTo(2).unsigned().references('id').inTable('rols').onDelete('CASCADE').onUpdate('CASCADE');
       table.string('remember_me_token').nullable()
 
       /**
