@@ -11,6 +11,9 @@
 
 import Server from '@ioc:Adonis/Core/Server'
 
+//protejer ruta static files
+
+
 /*
 |--------------------------------------------------------------------------
 | Global middleware

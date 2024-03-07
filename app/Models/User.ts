@@ -2,9 +2,11 @@ import { DateTime } from 'luxon'
 import Hash from '@ioc:Adonis/Core/Hash'
 import Rol from 'App/Models/Rol'
 import { column, beforeSave, BaseModel, hasOne,
-  HasOne } from '@ioc:Adonis/Lucid/Orm'
+  HasOne} from '@ioc:Adonis/Lucid/Orm'
 
 export default class User extends BaseModel {
+  public nombre_rol: string
+
   @column({ isPrimary: true })
   public id: number
 
@@ -24,6 +26,9 @@ export default class User extends BaseModel {
   public rol_id: number
 
   @column()
+  public rol_nombre: string
+
+  @column()
   public rememberMeToken: string | null
 
   @column.dateTime({ autoCreate: true })
@@ -38,6 +43,13 @@ export default class User extends BaseModel {
       user.password = await Hash.make(user.password)
     }
   }
+  static get computed() {
+    return ['nombre_rol'];
+  }
+  public getNombreRol({rol}: User){
+    return rol.nombre
+  }
+
   @hasOne(() => Rol,{
     localKey: 'rol_id',
     foreignKey: 'id'

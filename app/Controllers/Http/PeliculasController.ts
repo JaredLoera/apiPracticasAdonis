@@ -5,10 +5,8 @@ import Pelicula from 'App/Models/Pelicula'
 
 export default class ControllerPeliculasController {
     public async guardarImagen({request,response}: HttpContextContract){
-
         const id = request.param('id')
         const pelicula = await Pelicula.findOrFail(id)
-
         const imagen = request.file('imagen', {
             size: '10mb',
             extnames: ['jpg', 'png', 'jpeg'],

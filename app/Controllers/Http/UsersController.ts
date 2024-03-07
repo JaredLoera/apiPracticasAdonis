@@ -4,9 +4,15 @@ import Route from '@ioc:Adonis/Core/Route'
 import Mail from '@ioc:Adonis/Addons/Mail'
 import User from 'App/Models/User'
 export default class UsersController {
+    public async getUsers({ response }: HttpContextContract) {
+        const users = await User.all()
+        return response.status(200).json(users)
+    }
     public async getProfile({ auth, response }: HttpContextContract) {
-        const user = await auth.user
-        return response.status(200).json(user)
+        const usuario = await auth.user
+        const rol = await usuario?.related('rol').query().first()
+        usuario!.rol_nombre = rol?.nombre!
+        return response.status(200).json(usuario)
     }
     public async logout({ auth, response }: HttpContextContract) {
         await auth.use('api').revoke()
@@ -70,10 +76,7 @@ export default class UsersController {
             return response.status(401).json({ message: 'Credenciales incorrectas' })
         }
     }
-    public async getUsers({ response }: HttpContextContract) {
-        const users = await User.all()
-        return response.status(200).json(users)
-    }
+  
     public async createUser({ request, response }: HttpContextContract) {
         const userReglasValidacion = schema.create({
             email: schema.string({ trim: true }, [

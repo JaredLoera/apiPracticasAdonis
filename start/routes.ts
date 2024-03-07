@@ -1,6 +1,4 @@
 import Route from '@ioc:Adonis/Core/Route'
-
-
 Route.get('/users', 'usersController.getUsers').middleware('auth')
 
 Route.group(() => {
@@ -12,10 +10,6 @@ Route.group(() => {
 Route.get('/peliculas', 'PeliculasController.index')
 Route.post('/peliculas', 'PeliculasController.create')
 Route.post('/peliculas/:id/imagen', 'PeliculasController.guardarImagen')
-
-Route.get('/pruebas',()=>{
-    return 'Hola mundo'
-}).middleware(['auth','checkRol:Administrador'])
 
 Route.post('/register', 'usersController.createUser')
 Route.post('/login', 'usersController.login')
