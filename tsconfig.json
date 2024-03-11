@@ -12,6 +12,7 @@
     "rootDir": "./",
     "baseUrl": "./",
     "sourceMap": true,
+    "module": "commonjs",
     "paths": {
       "App/*": [
         "./app/*"
@@ -24,7 +25,8 @@
       ],
       "Database/*": [
         "./database/*"
-      ]
+      ],
+      
     },
     "types": [
       "@adonisjs/core",

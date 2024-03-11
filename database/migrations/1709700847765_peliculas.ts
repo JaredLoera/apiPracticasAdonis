@@ -11,6 +11,7 @@ export default class extends BaseSchema {
       table.date('fecha_estreno');
       //guardar imagen pelicula en base de datos
       table.string('imagen_url');
+      table.string('video_url');
       
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL

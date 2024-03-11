@@ -18,6 +18,9 @@ export default class Pelicula extends BaseModel {
   @column()
   public imagen_url: string
 
+  @column()
+  public video_url: string
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 

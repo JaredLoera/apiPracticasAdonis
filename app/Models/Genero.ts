@@ -8,6 +8,9 @@ export default class Genero extends BaseModel {
   @column()
   public nombre: string
 
+  @column()
+  public descripcion: string
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 
