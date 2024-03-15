@@ -6,55 +6,57 @@ import Genero from 'App/Models/Genero'
 
 export default class ControllerPeliculasController {
 
-    public async index({ response}: HttpContextContract) {
+    public async index({ response }: HttpContextContract) {
         const peliculas = await Pelicula.query().preload('generos')
         return response.json(peliculas)
-     }
-     public async genero ({response, request}: HttpContextContract){
+    }
+
+    public async genero({ response, request }: HttpContextContract) {
         var generoNombre = decodeURIComponent(request.param('genero'));
         const genero = await Genero.findBy('nombre', generoNombre)
         return response.json(genero)
-     }
-     public async generos({response}: HttpContextContract){
+    }
+
+    public async generos({ response }: HttpContextContract) {
         const generos = await Genero.all()
         return response.json(generos)
-     }
-     public async ultimasPeliculas({response}: HttpContextContract){
+    }
+
+    public async ultimasPeliculas({ response }: HttpContextContract) {
         const peliculas = await Pelicula.query().orderBy('created_at', 'desc').limit(5).preload('generos')
         return response.json(peliculas)
-     }
+    }
 
-     public async pelicula({response, request}: HttpContextContract){
+    public async pelicula({ response, request }: HttpContextContract) {
         const id = request.param('id')
         const pelicula = await Pelicula.query().where('id', id).preload('generos').first()
         return response.json(pelicula)
     }
-    public async peliculasGenero({response, request}: HttpContextContract){
-        const genero = request.param('genero')
+
+    public async peliculasGenero({ response, request }: HttpContextContract) {
+        const genero = decodeURIComponent(request.param('genero'));
         const peliculas = await Pelicula.query().whereHas('generos', (query) => {
             query.where('nombre', genero)
         }).preload('generos')
         return response.json(peliculas)
     }
 
-    public async peliculaStream({request,response}: HttpContextContract){
+    public async peliculaStream({ request, response }: HttpContextContract) {
         const id = request.param('id')
         const pelicula = await Pelicula.findOrFail(id)
         const location = `public/movies/${pelicula.titulo}.mp4`
-       if (fs.existsSync(location)) {
-         const videoStream = await fs.createReadStream(location);
-         response.header('Content-Type', 'video/mp4');
-         videoStream.pipe(response.response);
-         await new Promise<void>((resolve) => {
-            videoStream.on('end', resolve);
-          });
-       }
-        return response.status(404).json({message: 'Video no becouse', location: location})
+        if (fs.existsSync(location)) {
+            const videoStream = await fs.createReadStream(location);
+            response.header('Content-Type', 'video/mp4');
+            videoStream.pipe(response.response);
+            await new Promise<void>((resolve) => {
+                videoStream.on('end', resolve);
+            });
+        }
+        return response.status(404).json({ message: 'Video no becouse', location: location })
     }
-
- 
-
-    public async guardarImagen({request,response}: HttpContextContract){
+    
+    public async guardarImagen({ request, response }: HttpContextContract) {
         const id = request.param('id')
         const pelicula = await Pelicula.findOrFail(id)
         const imagen = request.file('imagen', {
@@ -62,22 +64,22 @@ export default class ControllerPeliculasController {
             extnames: ['jpg', 'png', 'jpeg'],
         })
         if (!imagen) {
-            return response.status(400).json({message: 'No se ha enviado ninguna imagen'})
+            return response.status(400).json({ message: 'No se ha enviado ninguna imagen' })
         }
         await imagen.move('public/img', {
-            name: pelicula.titulo+'.jpg',
+            name: pelicula.titulo + '.jpg',
             overwrite: true
         })
         if (imagen.fileName) {
             pelicula.imagen_url = `img/${imagen.fileName}`
             pelicula.video_url = `movies/${pelicula.titulo}.mp4`
             await pelicula.save()
-            return response.status(201).json({message: 'Imagen guardada'})
+            return response.status(201).json({ message: 'Imagen guardada' })
         }
-        return response.status(400).json({message: imagen.errors})
+        return response.status(400).json({ message: imagen.errors })
     }
-   
-     public async create({request,response }: HttpContextContract) {
+
+    public async create({ request, response }: HttpContextContract) {
         const peliculaReglasValidacion = schema.create({
             titulo: schema.string({ trim: true }, [
                 rules.minLength(3),
@@ -105,7 +107,7 @@ export default class ControllerPeliculasController {
             return response.status(400).json(error.messages)
         }
         const pelicula = new Pelicula()
-        const Idsgeneros= request.input('generos')
+        const Idsgeneros = request.input('generos')
         pelicula.titulo = request.input('titulo')
         pelicula.descripcion = request.input('descripcion')
         pelicula.fechaEstreno = request.input('fecha_estreno')
@@ -116,8 +118,8 @@ export default class ControllerPeliculasController {
             return response.status(201).json(pelicula)
         }
         return response.status(400).json({ message: 'Error al guardar la pelicula' })
-     }
-         
+    }
+
     // public async store({ }: HttpContextContract) {
     // }
     // public async show({ }: HttpContextContract) {

@@ -17,10 +17,13 @@ export default class AppProvider {
       const result = await this.count('* as total')
       return Number(result[0].$extras.total)
     })
+   
   }
 
   public async ready () {
-    // App is ready
+    if (this.app.environment === 'web') {
+      await import('../start/socket')
+     }
   }
 
   public async shutdown () {

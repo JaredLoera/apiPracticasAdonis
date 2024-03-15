@@ -1,5 +1,10 @@
 import Route from '@ioc:Adonis/Core/Route'
 
+
+Route.get('/', async ({ view }) => {
+    return view.render('home')
+  })
+
 Route.group(() => {
     Route.get('/send-email-confirm', 'usersController.sendMailConfirmation')
     Route.post('/logout', 'usersController.logout')
@@ -9,6 +14,7 @@ Route.group(() => {
 Route.group(() => {
     Route.get('users', 'usersController.getUsers')
 }).middleware(['auth','checkRol:Administrador'])
+
 
 Route.get('/pelicula/:id/stream', 'PeliculasController.peliculaStream')
 
@@ -20,6 +26,17 @@ Route.get('/peliculas/:genero', 'PeliculasController.peliculasGenero')
 Route.post('/peliculas', 'PeliculasController.create')
 Route.get('/pelicula/:id', 'PeliculasController.pelicula')
 Route.post('/peliculas/:id/imagen', 'PeliculasController.guardarImagen')
+
+//PARA SALAS
+
+Route.post('/salas', 'SalasController.createSalas').middleware('auth')
+Route.get('/salas', 'SalasController.getMisSalas').middleware('auth')
+Route.get('/salas/invitado', 'SalasController.getSalasInvitado').middleware('auth')
+Route.post('/salas/invitacion', 'SalasController.invitacionToUnion').middleware('auth')
+Route.get('/users/invitaciones', 'SalasController.myInvitations').middleware('auth')
+Route.put('/users/invitaciones/aceptar', 'SalasController.aceptarInvitacion').middleware('auth')
+
+
 
 Route.post('/register', 'usersController.createUser')
 Route.post('/login', 'usersController.login')

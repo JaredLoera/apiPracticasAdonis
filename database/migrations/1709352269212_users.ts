@@ -8,6 +8,7 @@ export default class extends BaseSchema {
       table.increments('id').primary()
       table.string('email', 255).notNullable().unique()
       table.string('password', 180).notNullable()
+      table.string('username', 80).nullable()
       table.boolean('it_is_active').defaultTo(true)
       table.boolean('it_is_verified').defaultTo(false)
       table.integer('rol_id').defaultTo(2).unsigned().references('id').inTable('rols').onDelete('CASCADE').onUpdate('CASCADE');

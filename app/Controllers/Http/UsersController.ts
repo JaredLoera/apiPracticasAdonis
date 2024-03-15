@@ -3,7 +3,13 @@ import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import Route from '@ioc:Adonis/Core/Route'
 import Mail from '@ioc:Adonis/Addons/Mail'
 import User from 'App/Models/User'
+import Notificacion from 'App/Models/Notificacion'
 export default class UsersController {
+    public async getNotification({auth,response}:HttpContextContract){
+        const user = await auth.user
+        const notificaciones = await Notificacion.query().where('user_id',user!.id)
+        return response.status(200).json(notificaciones)
+    }
     public async getUsers({ response }: HttpContextContract) {
         const users = await User.all()
         return response.status(200).json(users)

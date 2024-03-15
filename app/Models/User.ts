@@ -2,7 +2,8 @@ import { DateTime } from 'luxon'
 import Hash from '@ioc:Adonis/Core/Hash'
 import Rol from 'App/Models/Rol'
 import { column, beforeSave, BaseModel, hasOne,
-  HasOne} from '@ioc:Adonis/Lucid/Orm'
+  HasOne,ManyToMany,manyToMany} from '@ioc:Adonis/Lucid/Orm'
+import Sala from './Sala'
 
 export default class User extends BaseModel {
   public nombre_rol: string
@@ -29,6 +30,12 @@ export default class User extends BaseModel {
   public rol_nombre: string
 
   @column()
+  public salas_id: number
+
+  @column()
+  public sala_id: number
+
+  @column()
   public rememberMeToken: string | null
 
   @column.dateTime({ autoCreate: true })
@@ -43,12 +50,21 @@ export default class User extends BaseModel {
       user.password = await Hash.make(user.password)
     }
   }
-  static get computed() {
-    return ['nombre_rol'];
-  }
-  public getNombreRol({rol}: User){
-    return rol.nombre
-  }
+
+    @hasOne(() => Sala,{
+      foreignKey: 'id',
+      localKey: 'sala_id'
+    })
+    public sala: HasOne<typeof Sala>
+
+    @manyToMany(() => Sala,{
+      pivotTable: 'sala_user',
+      localKey: 'id',
+      pivotForeignKey: 'user_id',
+      relatedKey: 'id',
+      pivotRelatedForeignKey: 'sala_id',
+    })
+    public salas: ManyToMany<typeof Sala>
 
   @hasOne(() => Rol,{
     localKey: 'rol_id',
