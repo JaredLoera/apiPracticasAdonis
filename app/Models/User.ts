@@ -4,6 +4,7 @@ import Rol from 'App/Models/Rol'
 import { column, beforeSave, BaseModel, hasOne,
   HasOne,ManyToMany,manyToMany} from '@ioc:Adonis/Lucid/Orm'
 import Sala from './Sala'
+import Message from './Message'
 
 export default class User extends BaseModel {
   public nombre_rol: string
@@ -50,6 +51,11 @@ export default class User extends BaseModel {
       user.password = await Hash.make(user.password)
     }
   }
+  @hasOne(() => Message,{
+    foreignKey: 'id',
+    localKey: 'user_id'
+  })
+  public message: HasOne<typeof Message>
 
     @hasOne(() => Sala,{
       foreignKey: 'id',

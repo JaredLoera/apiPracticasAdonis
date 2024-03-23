@@ -4,7 +4,53 @@ import Route from '@ioc:Adonis/Core/Route'
 import Mail from '@ioc:Adonis/Addons/Mail'
 import User from 'App/Models/User'
 import Notificacion from 'App/Models/Notificacion'
+import Message from 'App/Models/Message'
+import Sala from 'App/Models/Sala'
 export default class UsersController {
+    public async getMessageSala({auth,response,request}:HttpContextContract){
+        const sala = (await Sala.findOrFail(request.param('sala_id'))).related('users').query().where('user_id',auth.user!.id).first()
+        if (!sala) {
+            return response.status(400).json({message:'No puedes ver mensajes de salas que no perteneces'})
+        }
+      const mesages = await (Message.query().where('sala_id',request.param('sala_id'))).preload('user')
+        return response.status(200).json(mesages)
+    }
+    public async createMessage({auth,response,request}:HttpContextContract){
+    
+        const sala = (await Sala.findOrFail(request.input('sala_id'))).related('users').query().where('user_id',auth.user!.id).first()
+        if (!sala) {
+            return response.status(400).json({message:'No puedes enviar mensajes a salas que no perteneces'})
+        }
+        const messageSchema = schema.create({
+            message: schema.string({trim:true},[
+                rules.required()
+            ]),
+            sala_id:schema.number([
+                rules.required(),
+                rules.exists({table:'salas',column:'id'})
+            ])
+        })
+        try {
+            await request.validate({
+                schema: messageSchema,
+                messages: {
+                    required: 'El campo {{field}} es requerido',
+                    exists: 'La sala no existe'
+                }
+            })
+        } catch (error) {
+            return response.status(400).json(error.messages)
+        }
+        const message = new Message()
+        message.message = request.input('message')
+        message.sala_id = request.input('sala_id')
+        message.user_id = auth.user!.id
+        if (await message.save()) {
+            return response.status(201).json({ message: 'Mensaje creado' })
+        }
+        return response.status(500).json({ message: 'Error al crear mensaje' })
+       
+    }
     public async getNotification({auth,response}:HttpContextContract){
         const user = await auth.user
         const notificaciones = await Notificacion.query().where('user_id',user!.id)

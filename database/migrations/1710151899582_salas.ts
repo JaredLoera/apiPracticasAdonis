@@ -8,9 +8,11 @@ export default class extends BaseSchema {
       table.increments('id')
       table.string('nombre').notNullable();
       table.integer('user_id').unsigned().notNullable();
+      table.integer('pelicula_id').unsigned().notNullable();
+      table.boolean('pausada').defaultTo(false);
       table.boolean('status').defaultTo(true);
       table.foreign('user_id').references('id').inTable('users').onDelete('CASCADE').onUpdate('CASCADE'); 
-
+      table.foreign('pelicula_id').references('id').inTable('peliculas').onDelete('CASCADE').onUpdate('CASCADE');
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
        */

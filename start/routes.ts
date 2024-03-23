@@ -36,6 +36,10 @@ Route.post('/salas/invitacion', 'SalasController.invitacionToUnion').middleware(
 Route.get('/users/invitaciones', 'SalasController.myInvitations').middleware('auth')
 Route.put('/users/invitaciones/aceptar', 'SalasController.aceptarInvitacion').middleware('auth')
 
+//PARA MENSAJES
+Route.post('/message', 'usersController.createMessage').middleware('auth')
+Route.get('/message/:sala_id', 'usersController.getMessageSala').middleware('auth')
+
 
 
 Route.post('/register', 'usersController.createUser')
