@@ -21,13 +21,16 @@ export default class SalasController {
             nombre: schema.string({ trim: true }, [
                 rules.required(),
                 rules.maxLength(50)
+            ]),
+            pelicula_id: schema.number([
+                rules.required()
             ])
         })
         try {
             await request.validate({
                 schema: salaSchema,
                 messages: {
-                    'nombre.required': 'El nombre de la sala es requerido',
+                    required: 'El campo {{ field }} es requerido', 
                     'nombre.maxLength': 'El nombre de la sala no puede ser mayor a 50 caracteres'
                 }
             })
@@ -36,6 +39,7 @@ export default class SalasController {
         }
         const sala = new Sala()
         sala.nombre = request.input('nombre')
+        sala.pelicula_id = request.input('pelicula_id')
         sala.user_id = auth.user!.id
         if (await sala.save()) {
             return response.status(201).json({ message: 'Sala creada' })

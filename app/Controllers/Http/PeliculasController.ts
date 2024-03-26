@@ -72,7 +72,9 @@ export default class ControllerPeliculasController {
         })
         if (imagen.fileName) {
             pelicula.imagen_url = `img/${imagen.fileName}`
-            pelicula.video_url = `movies/${pelicula.titulo}.mp4`
+            //cambiar letras a minusculas y quitar espacios
+            const tituloMovie = pelicula.titulo.replace(/\s/g, '_').toLowerCase()
+            pelicula.video_url = `movies/${tituloMovie}.mp4`
             await pelicula.save()
             return response.status(201).json({ message: 'Imagen guardada' })
         }
